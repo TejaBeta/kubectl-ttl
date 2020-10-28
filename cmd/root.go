@@ -21,9 +21,15 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/tejabeta/kubectl-ttl/internal/options"
 )
 
-var cfgFile string
+var (
+	nameSpace    string
+	allResources bool
+	time         uint64
+	cfgFile      string
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -31,11 +37,21 @@ var rootCmd = &cobra.Command{
 	Short: "A tiny tool to add time to live option to k8s resources",
 	Long: `A tiny kubectl plugin to add time to live option
 to k8s resources within a namespace.
+
+Tool helps to create a job within the specified namespace
+to kill/clean the resources after certain time. 
 `,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Println("Born!")
+		options, err := options.GetOptions()
+		if err != nil {
+			log.Errorln(err)
+			return
+		}
+		options.AllResources = allResources
+		options.Namespace = nameSpace
+		options.TimeToLive = time
 	},
 }
 
@@ -50,16 +66,10 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kubectl-ttl.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().StringVarP(&nameSpace, "ns", "n", "", "namespace to apply ttl")
+	rootCmd.Flags().Uint64VarP(&time, "time", "t", 15, "time in minutes to keep the resource alive")
+	rootCmd.Flags().BoolVarP(&allResources, "all", "a", false, "boolean flag to take all resources into consideration")
+	rootCmd.MarkFlagRequired("ns")
 }
 
 // initConfig reads in config file and ENV variables if set.
