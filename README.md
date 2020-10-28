@@ -12,7 +12,11 @@ To facilitate the above mentioned process, `kubectl-ttl` came into existence jus
 
 ## How?
 
-Nothing complex, based on the command parameters the tool creates a **`job`** within the namespace with the appropriate role to delete the given resources within a namespace.
+Nothing complex, based on the command parameters the tool creates a **`job`** within the namespace with the appropriate role to delete the given resources at a particular time within the namespace.
+
+## Similar Projects
+
+- [kube-janitor](https://github.com/hjacobs/kube-janitor)
 
 ## How can I help?
 
