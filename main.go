@@ -1,6 +1,4 @@
 /*
-Copyright © 2020 NAME HERE <EMAIL ADDRESS>
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,8 +13,16 @@ limitations under the License.
 */
 package main
 
-import "github.com/tejabeta/kubectl-ttl/cmd"
+import (
+	log "github.com/sirupsen/logrus"
+	"github.com/tejabeta/kubectl-ttl/cmd"
+)
 
 func main() {
+	// log properties, applies to whole code base
+	log.SetFormatter(&log.TextFormatter{
+		DisableColors: true,
+		FullTimestamp: true,
+	})
 	cmd.Execute()
 }
