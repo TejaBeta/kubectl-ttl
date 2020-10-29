@@ -16,10 +16,46 @@ package ttl
 
 import (
 	log "github.com/sirupsen/logrus"
+	"github.com/tejabeta/kopy/pkg/koperator"
 	ttlOpts "github.com/tejabeta/kubectl-ttl/internal/options"
+	appv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	v1beta1 "k8s.io/api/extensions/v1beta1"
+	rbacv1 "k8s.io/api/rbac/v1"
 )
+
+// KopyResources as name suggests a struct type to hold all the resources
+type ttlResources struct {
+	Deployments  *[]appv1.Deployment
+	ConfigMaps   *[]corev1.ConfigMap
+	Roles        *[]rbacv1.Role
+	RoleBindings *[]rbacv1.RoleBinding
+	Secrets      *[]corev1.Secret
+	Services     *[]corev1.Service
+	Ingresses    *[]v1beta1.Ingress
+}
 
 // KubectlTTL is the main function that acts as the entry point
 func KubectlTTL(options *ttlOpts.Options) {
-	log.Println(options.AllResources, options.Namespace, options.TimeToLive)
+	kOpts, err := koperator.GetOpts(options.Context, options.Namespace)
+	if err != nil {
+		log.Errorln(err)
+		return
+	}
+
+	if isNS(kOpts) {
+		log.Println("Namespace ", options.Namespace, " exits")
+	} else {
+		log.Error("No namespace ", options.Namespace, " found")
+	}
+
+	return
+}
+
+func isNS(kOpts *koperator.Options) bool {
+	_, err := kOpts.GetNS()
+	if err != nil {
+		return false
+	}
+	return true
 }
