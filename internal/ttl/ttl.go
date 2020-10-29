@@ -44,7 +44,12 @@ func KubectlTTL(options *ttlOpts.Options) {
 	}
 
 	if isNS(kOpts) {
-		log.Println("Namespace ", options.Namespace, " exits")
+		resources, err := getResources(kOpts)
+		if err != nil {
+			log.Error(err)
+			return
+		}
+		log.Println(resources)
 	} else {
 		log.Error("No namespace ", options.Namespace, " found")
 	}
@@ -58,4 +63,53 @@ func isNS(kOpts *koperator.Options) bool {
 		return false
 	}
 	return true
+}
+
+func getResources(kOpts *koperator.Options) (*ttlResources, error) {
+	deployments, err := kOpts.GetDeployments()
+	if err != nil {
+		return nil, err
+	}
+
+	configMaps, err := kOpts.GetConfigMaps()
+	if err != nil {
+		return nil, err
+	}
+
+	roles, err := kOpts.GetRoles()
+	if err != nil {
+		return nil, err
+	}
+
+	roleBindings, err := kOpts.GetRoleBindings()
+	if err != nil {
+		return nil, err
+	}
+
+	secrets, err := kOpts.GetSecrets()
+	if err != nil {
+		return nil, err
+	}
+
+	services, err := kOpts.GetSVC()
+	if err != nil {
+		return nil, err
+	}
+
+	ingresses, err := kOpts.GetIngress()
+	if err != nil {
+		return nil, err
+	}
+
+	ttlResources := ttlResources{
+		Deployments:  &deployments.Items,
+		ConfigMaps:   &configMaps.Items,
+		Roles:        &roles.Items,
+		RoleBindings: &roleBindings.Items,
+		Secrets:      &secrets.Items,
+		Services:     &services.Items,
+		Ingresses:    &ingresses.Items,
+	}
+
+	return &ttlResources, nil
 }
