@@ -11,29 +11,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package options
+
+package ttl
 
 import (
-	"github.com/tejabeta/kubectl-ttl/pkg/context"
-	"k8s.io/client-go/rest"
+	log "github.com/sirupsen/logrus"
+	ttlOpts "github.com/tejabeta/kubectl-ttl/internal/options"
 )
 
-// Options is struct holding all the options for the tool to work
-type Options struct {
-	Namespace    string
-	AllResources bool
-	TimeToLive   uint64
-	Context      *rest.Config
-}
-
-// GetOptions is a function helps to retreive certain options
-func GetOptions() (*Options, error) {
-	c, err := context.GetContext()
-	if err != nil {
-		return nil, err
-	}
-
-	return &Options{
-		Context: c,
-	}, err
+// KubectlTTL is the main function that acts as the entry point
+func KubectlTTL(options *ttlOpts.Options) {
+	log.Println(options.AllResources, options.Namespace, options.TimeToLive)
 }

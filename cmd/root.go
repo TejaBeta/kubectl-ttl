@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/tejabeta/kubectl-ttl/internal/options"
+	"github.com/tejabeta/kubectl-ttl/internal/ttl"
 )
 
 var (
@@ -52,6 +53,7 @@ to kill/clean the resources after certain time.
 		options.AllResources = allResources
 		options.Namespace = nameSpace
 		options.TimeToLive = time
+		ttl.KubectlTTL(options)
 	},
 }
 
