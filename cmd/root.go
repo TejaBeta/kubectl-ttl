@@ -14,8 +14,13 @@ limitations under the License.
 package cmd
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"unicode"
+
+	log "github.com/sirupsen/logrus"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -40,7 +45,19 @@ to kill/clean the resources after certain time.
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hello")
+		stdin := cmd.InOrStdin()
+		in, err := ioutil.ReadAll(stdin)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		log.Println(time)
+		if isJSON(in) {
+			log.Println("JSON format")
+		} else if isYAML(in) {
+			log.Println("YAML format")
+		} else {
+			log.Fatalln("Unsupported Format")
+		}
 	},
 }
 
@@ -82,4 +99,12 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+func isJSON(s []byte) bool {
+	return bytes.HasPrefix(bytes.TrimLeftFunc(s, unicode.IsSpace), []byte{'{'})
+}
+
+func isYAML(s []byte) bool {
+	return bytes.HasPrefix(bytes.TrimLeftFunc(s, unicode.IsSpace), []byte{'a', 'p', 'i', 'V', 'e', 'r', 's', 'i', 'o', 'n'})
 }
