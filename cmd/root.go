@@ -45,28 +45,7 @@ to kill/clean the resources after certain time.
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		stdin := os.Stdin
-		info, err := stdin.Stat()
-		if err != nil {
-			log.Fatalln(err)
-		}
-		if info.Size() <= 0 {
-			log.Fatalln("No input provided")
-		}
-
-		in, err := ioutil.ReadAll(stdin)
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		log.Println(time)
-		if isJSON(in) {
-			log.Println("JSON format")
-		} else if isYAML(in) {
-			log.Println("YAML format")
-		} else {
-			log.Fatalln("Unsupported Format")
-		}
+		initTTL()
 	},
 }
 
@@ -107,6 +86,31 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	}
+}
+
+func initTTL() {
+	stdin := os.Stdin
+	info, err := stdin.Stat()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	if info.Size() <= 0 {
+		log.Fatalln("No input provided")
+	}
+
+	in, err := ioutil.ReadAll(stdin)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Println(time)
+	if isJSON(in) {
+		log.Println("JSON format")
+	} else if isYAML(in) {
+		log.Println("YAML format")
+	} else {
+		log.Fatalln("Unsupported Format")
 	}
 }
 
