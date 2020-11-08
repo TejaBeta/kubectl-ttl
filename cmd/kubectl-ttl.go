@@ -14,13 +14,12 @@ limitations under the License.
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"unicode"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/tejabeta/kubectl-ttl/internal/util"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -91,10 +90,12 @@ func initConfig() {
 
 func initTTL() {
 	stdin := os.Stdin
+
 	info, err := stdin.Stat()
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 	if info.Size() <= 0 {
 		log.Fatalln("No input provided")
 	}
@@ -105,19 +106,11 @@ func initTTL() {
 	}
 
 	log.Println(time)
-	if isJSON(in) {
+	if util.IsJSON(in) {
 		log.Println("JSON format")
-	} else if isYAML(in) {
+	} else if util.IsYAML(in) {
 		log.Println("YAML format")
 	} else {
-		log.Fatalln("Unsupported Format")
+		log.Fatalln("Invalid input")
 	}
-}
-
-func isJSON(s []byte) bool {
-	return bytes.HasPrefix(bytes.TrimLeftFunc(s, unicode.IsSpace), []byte{'{'})
-}
-
-func isYAML(s []byte) bool {
-	return bytes.HasPrefix(bytes.TrimLeftFunc(s, unicode.IsSpace), []byte{'a', 'p', 'i', 'V', 'e', 'r', 's', 'i', 'o', 'n'})
 }
