@@ -21,6 +21,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/tejabeta/kubectl-ttl/internal/util"
 
+	"github.com/ghodss/yaml"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -105,12 +106,16 @@ func initTTL() {
 		log.Fatalln(err)
 	}
 
-	log.Println(time)
-	if util.IsJSON(in) {
-		log.Println("JSON format")
-	} else if util.IsYAML(in) {
-		log.Println("YAML format")
-	} else {
-		log.Fatalln("Invalid input")
+	if !util.IsJSON(in) && !util.IsYAML(in) {
+		log.Fatalln("Invalid input format")
 	}
+
+	if util.IsYAML(in) {
+		in, err = yaml.YAMLToJSON(in)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}
+
+	util.ResKind(string(in))
 }

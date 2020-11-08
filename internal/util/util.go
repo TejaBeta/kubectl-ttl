@@ -32,10 +32,12 @@ func IsYAML(s []byte) bool {
 	return bytes.HasPrefix(bytes.TrimLeftFunc(s, unicode.IsSpace), []byte{'a', 'p', 'i', 'V', 'e', 'r', 's', 'i', 'o', 'n'})
 }
 
-// ResourceKind a function to parse and identify kind of resource
-func ResourceKind(s string) string {
+// ResKind a function to parse and identify kind of resource
+func ResKind(s string) string {
 	if !gjson.Valid(s) {
 		log.Fatal("Invalid input")
 	}
+
+	log.Println(s)
 	return ""
 }
