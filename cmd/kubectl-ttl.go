@@ -113,9 +113,9 @@ func initTTL() {
 	if util.IsYAML(in) {
 		in, err = yaml.YAMLToJSON(in)
 		if err != nil {
-			log.Fatalln(err)
+			log.Errorf("Error while converting yaml to json : %v", err)
 		}
 	}
 
-	util.ResKind(string(in))
+	log.Println(util.IsResValid(string(in)))
 }

@@ -22,6 +22,19 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+var resourceList = map[string]bool{
+	"Pod":                   true,
+	"Service":               true,
+	"Ingress":               true,
+	"ConfigMap":             true,
+	"Secret":                true,
+	"ReplicaSet":            true,
+	"Deployment":            true,
+	"PersistentVolumeClaim": true,
+	"PersistentVolume":      true,
+	"ServiceAccount":        true,
+}
+
 // IsJSON a function to validate the provided input is json
 func IsJSON(s []byte) bool {
 	return bytes.HasPrefix(bytes.TrimLeftFunc(s, unicode.IsSpace), []byte{'{'})
@@ -32,12 +45,23 @@ func IsYAML(s []byte) bool {
 	return bytes.HasPrefix(bytes.TrimLeftFunc(s, unicode.IsSpace), []byte{'a', 'p', 'i', 'V', 'e', 'r', 's', 'i', 'o', 'n'})
 }
 
-// ResKind a function to parse and identify kind of resource
-func ResKind(s string) string {
+// IsResValid a function to parse and validate if the input resouces are valid for ttl
+func IsResValid(s string) bool {
 	if !gjson.Valid(s) {
 		log.Fatal("Invalid input")
 	}
 
-	log.Println(s)
-	return ""
+	if gjson.Get(s, "kind").String() == "List" {
+		result := gjson.Get(s, "items.#.kind")
+		for _, data := range result.Array() {
+			if !resourceList[data.String()] {
+				return false
+			}
+		}
+	} else {
+		if !(resourceList[gjson.Get(s, "kind").String()]) {
+			return false
+		}
+	}
+	return true
 }
