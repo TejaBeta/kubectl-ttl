@@ -10,4 +10,7 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/tidwall/gjson v1.6.3
 	github.com/tidwall/match v1.0.2 // indirect
+	k8s.io/api v0.19.0
+	k8s.io/apimachinery v0.19.0
+	k8s.io/client-go v0.19.0
 )
