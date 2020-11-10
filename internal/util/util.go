@@ -17,12 +17,9 @@ package util
 import (
 	"bytes"
 	"unicode"
-
-	log "github.com/sirupsen/logrus"
-	"github.com/tidwall/gjson"
 )
 
-var resourceList = map[string]bool{
+var validResList = map[string]bool{
 	"Pod":                   true,
 	"Service":               true,
 	"Ingress":               true,
@@ -47,19 +44,9 @@ func IsYAML(s []byte) bool {
 
 // IsResValid a function to parse and validate if the input resouces are valid for ttl
 func IsResValid(s string) bool {
-	if !gjson.Valid(s) {
-		log.Fatal("Invalid input")
-	}
-
-	if gjson.Get(s, "kind").String() == "List" {
-		result := gjson.Get(s, "items.#.kind")
-		for _, data := range result.Array() {
-			if !resourceList[data.String()] {
-				return false
-			}
-		}
-	} else {
-		if !(resourceList[gjson.Get(s, "kind").String()]) {
+	resources := ResType(s)
+	for _, data := range resources {
+		if !validResList[data] {
 			return false
 		}
 	}
