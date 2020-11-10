@@ -119,4 +119,5 @@ func initTTL() {
 	}
 
 	log.Println(util.IsResValid(string(in)))
+	log.Println(util.ResNS(string(in)))
 }

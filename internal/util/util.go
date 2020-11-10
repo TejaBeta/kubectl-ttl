@@ -32,6 +32,18 @@ var validResList = map[string]bool{
 	"ServiceAccount":        true,
 }
 
+func unique(s []string) []string {
+	keys := make(map[string]bool)
+	list := []string{}
+	for _, entry := range s {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	return list
+}
+
 // IsJSON a function to validate the provided input is json
 func IsJSON(s []byte) bool {
 	return bytes.HasPrefix(bytes.TrimLeftFunc(s, unicode.IsSpace), []byte{'{'})
