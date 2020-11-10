@@ -21,18 +21,21 @@ import (
 
 // ResType a function to parse and get all the resource type from the input
 func ResType(s string) []string {
-	var output []string
 	if !gjson.Valid(s) {
 		log.Fatal("Invalid input")
 	}
 
+	var output []string
+
 	if gjson.Get(s, "kind").String() == "List" {
 		result := gjson.Get(s, "items.#.kind")
+
 		for _, data := range result.Array() {
 			output = append(output, data.String())
 		}
 	} else {
 		output = append(output, gjson.Get(s, "kind").String())
 	}
+
 	return output
 }
