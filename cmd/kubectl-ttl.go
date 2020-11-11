@@ -118,5 +118,18 @@ func initTTL() {
 		}
 	}
 
-	log.Println(util.GetResDetails(string(in)))
+	resInfo := util.GetResDetails(string(in))
+	if !isResValid(resInfo) {
+		log.Fatalln("Invalid resource provided")
+	}
+
+}
+
+func isResValid(r []util.ResInfo) bool {
+	for _, v := range r {
+		if !util.ValidResList[v.Kind] {
+			return false
+		}
+	}
+	return true
 }

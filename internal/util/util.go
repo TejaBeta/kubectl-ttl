@@ -21,9 +21,9 @@ import (
 
 // ResInfo a struct that defines information about resources
 type ResInfo struct {
-	name      string
-	kind      string
-	namespace string
+	Name      string
+	Kind      string
+	Namespace string
 }
 
 // ValidResList contains a list of all the valid resources

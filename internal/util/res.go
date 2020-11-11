@@ -32,9 +32,11 @@ func GetResDetails(s string) []ResInfo {
 		names := gjson.Get(s, "items.#.metadata.name").Array()
 		namespaces := gjson.Get(s, "items.#.metadata.namespace").Array()
 		for i, v := range kinds {
-			value := ResInfo{name: names[i].String(), kind: v.String(), namespace: namespaces[i].String()}
+			value := ResInfo{Name: names[i].String(), Kind: v.String(), Namespace: namespaces[i].String()}
 			output = append(output, value)
 		}
+	} else {
+		output = append(output, ResInfo{Name: gjson.Get(s, "items.#.metadata.name").String(), Kind: gjson.Get(s, "items.#.kind").String(), Namespace: gjson.Get(s, "items.#.metadata.namespace").String()})
 	}
 
 	return output
