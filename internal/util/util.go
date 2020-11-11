@@ -19,7 +19,15 @@ import (
 	"unicode"
 )
 
-var validResList = map[string]bool{
+// ResInfo a struct that defines information about resources
+type ResInfo struct {
+	name      string
+	kind      string
+	namespace string
+}
+
+// ValidResList contains a list of all the valid resources
+var ValidResList = map[string]bool{
 	"Pod":                   true,
 	"Service":               true,
 	"Ingress":               true,
@@ -52,15 +60,4 @@ func IsJSON(s []byte) bool {
 // IsYAML a function to validate the provided input is json
 func IsYAML(s []byte) bool {
 	return bytes.HasPrefix(bytes.TrimLeftFunc(s, unicode.IsSpace), []byte{'a', 'p', 'i', 'V', 'e', 'r', 's', 'i', 'o', 'n'})
-}
-
-// IsResValid a function to parse and validate if the input resouces are valid for ttl
-func IsResValid(s string) bool {
-	resources := ResType(s)
-	for _, data := range resources {
-		if !validResList[data] {
-			return false
-		}
-	}
-	return true
 }

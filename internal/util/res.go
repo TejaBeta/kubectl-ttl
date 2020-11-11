@@ -19,49 +19,23 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// ResType a function to parse and get all the resource type from the input
-func ResType(s string) []string {
+// GetResDetails returns information related to resources
+func GetResDetails(s string) []ResInfo {
 	if !gjson.Valid(s) {
 		log.Fatal("Invalid input")
 	}
 
-	var output []string
+	var output []ResInfo
 
 	if gjson.Get(s, "kind").String() == "List" {
-		result := gjson.Get(s, "items.#.kind")
-
-		for _, data := range result.Array() {
-			output = append(output, data.String())
+		kinds := gjson.Get(s, "items.#.kind").Array()
+		names := gjson.Get(s, "items.#.metadata.name").Array()
+		namespaces := gjson.Get(s, "items.#.metadata.namespace").Array()
+		for i, v := range kinds {
+			value := ResInfo{name: names[i].String(), kind: v.String(), namespace: namespaces[i].String()}
+			output = append(output, value)
 		}
-	} else {
-		output = append(output, gjson.Get(s, "kind").String())
 	}
 
 	return output
-}
-
-// ResNS returns the namespace of all the resources
-func ResNS(s string) string {
-	if !gjson.Valid(s) {
-		log.Fatal("Invalid input")
-	}
-
-	var output []string
-
-	if gjson.Get(s, "kind").String() == "List" {
-		result := gjson.Get(s, "items.#.metadata.namespace")
-		for _, data := range result.Array() {
-			output = append(output, data.String())
-		}
-	} else {
-		output = append(output, gjson.Get(s, "metadata.namespace").String())
-	}
-
-	output = unique(output)
-
-	if len(output) > 1 {
-		log.Fatal("Unable to support multiple namespaces")
-	}
-
-	return output[0]
 }
