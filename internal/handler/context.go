@@ -23,8 +23,8 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-// GetContext is a function to read current context
-func GetContext() (*rest.Config, error) {
+// getContext is a function to read current context
+func getContext() (*rest.Config, error) {
 	path, err := configPath()
 	if err != nil {
 		return nil, err
