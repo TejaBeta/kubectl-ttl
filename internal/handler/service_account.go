@@ -42,3 +42,29 @@ func CreateSA(ns string) {
 
 	log.Println("Service Account ttl-sa is created in namespace ", ns)
 }
+
+// IsSAExists function to get the sa with name ttl-sa
+func IsSAExists(ns string) bool {
+	context, err := getContext()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	options, err := k8s.GetOpts(context, ns)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	results, err := options.GetSA()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	for _, v := range results.Items {
+		if v.Name == "ttl-sa" {
+			return true
+		}
+	}
+
+	return false
+}
