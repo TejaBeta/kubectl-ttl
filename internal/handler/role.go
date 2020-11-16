@@ -52,3 +52,42 @@ func CreateRole(ns string, kind string, resName string) {
 
 	log.Println("Role ttl-", kind, "-role is created in namespace ", ns)
 }
+
+// CreateRB is a function to create role binding to the above role
+func CreateRB(ns string, sa string, role string) {
+
+	subject := rbacv1.Subject{
+		Kind:      "ServiceAccount",
+		Name:      sa,
+		Namespace: ns,
+	}
+
+	roleRef := rbacv1.RoleRef{
+		APIGroup: "rbac.authorization.k8s.io",
+		Kind:     "Role",
+		Name:     role,
+	}
+
+	rb := &rbacv1.RoleBinding{
+		ObjectMeta: metav1.ObjectMeta{Name: "ttl-rolebinding", Namespace: ns},
+		Subjects:   []rbacv1.Subject{subject},
+		RoleRef:    roleRef,
+	}
+
+	context, err := getContext()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	options, err := k8s.GetOpts(context, ns)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	_, err = options.CreateRBinding(rb)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Println("Role ttl-rolebinding is created in namespace ", ns)
+}
