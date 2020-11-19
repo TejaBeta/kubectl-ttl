@@ -43,8 +43,8 @@ func CreateSA(ns string) {
 	log.Println("Service Account ttl-sa is created in namespace ", ns)
 }
 
-// IsSAExists function to get the sa with name ttl-sa
-func IsSAExists(ns string) bool {
+// CheckSA validates and identifies if a service account already exists
+func CheckSA(ns string, name string) bool {
 	context, err := getContext()
 	if err != nil {
 		log.Fatalln(err)
@@ -61,7 +61,7 @@ func IsSAExists(ns string) bool {
 	}
 
 	for _, v := range results.Items {
-		if v.Name == "ttl-sa" {
+		if v.Name == name {
 			return true
 		}
 	}
