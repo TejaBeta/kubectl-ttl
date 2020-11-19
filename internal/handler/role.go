@@ -92,7 +92,7 @@ func CreateRB(ns string, sa string, role string) {
 	log.Println("Role ttl-rolebinding is created in namespace ", ns)
 }
 
-// CheckRoles lets us validate and identify the roles
+// CheckRole lets us validate and identify the roles
 func CheckRole(ns string, name string) bool {
 	context, err := getContext()
 	if err != nil {
