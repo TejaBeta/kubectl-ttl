@@ -117,3 +117,29 @@ func CheckRole(ns string, name string) bool {
 
 	return false
 }
+
+// CheckRB lets us validate and identify the roles
+func CheckRB(ns string, name string) bool {
+	context, err := getContext()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	options, err := k8s.GetOpts(context, ns)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	results, err := options.GetRoleBindings()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	for _, v := range results.Items {
+		if v.Name == name {
+			return true
+		}
+	}
+
+	return false
+}
