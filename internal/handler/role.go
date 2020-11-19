@@ -91,3 +91,29 @@ func CreateRB(ns string, sa string, role string) {
 
 	log.Println("Role ttl-rolebinding is created in namespace ", ns)
 }
+
+// CheckRoles lets us validate and identify the roles
+func CheckRole(ns string, name string) bool {
+	context, err := getContext()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	options, err := k8s.GetOpts(context, ns)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	results, err := options.GetRoles()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	for _, v := range results.Items {
+		if v.Name == name {
+			return true
+		}
+	}
+
+	return false
+}
