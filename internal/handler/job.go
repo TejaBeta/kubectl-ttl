@@ -72,3 +72,29 @@ func CreateJob(ns string, kind string, name string, sa string, time int) {
 
 	log.Println("ttl-", kind, "-job created successfully")
 }
+
+// CheckJob lets us validate and identify the roles
+func CheckJob(ns string, name string) bool {
+	context, err := getContext()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	options, err := k8s.GetOpts(context, ns)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	results, err := options.GetJob()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	for _, v := range results.Items {
+		if v.Name == name {
+			return true
+		}
+	}
+
+	return false
+}
