@@ -26,7 +26,7 @@ func CreateRole(ns string, name string, kind string, resName string) {
 	rule := &rbacv1.PolicyRule{
 		Verbs:         []string{"delete"},
 		APIGroups:     []string{"*"},
-		ResourceNames: []string{resName},
+		ResourceNames: []string{resName, "jobs"},
 		Resources:     []string{kind},
 	}
 

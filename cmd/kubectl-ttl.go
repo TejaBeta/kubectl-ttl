@@ -18,8 +18,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/tejabeta/kubectl-ttl/internal/handler"
 	"github.com/tejabeta/kubectl-ttl/internal/util"
 
 	"github.com/ghodss/yaml"
@@ -123,6 +125,44 @@ func initTTL() {
 		log.Fatalln("Invalid resource provided")
 	}
 
+	for _, v := range resInfo {
+		if !handler.CheckSA(v.Namespace, strings.ToLower(v.Kind+"-"+v.Name+"-SA-ttl")) {
+			handler.CreateSA(
+				v.Namespace,
+				strings.ToLower(v.Kind+"-"+v.Name+"-SA-ttl"),
+			)
+		}
+
+		if !handler.CheckRole(v.Namespace, strings.ToLower(v.Kind+"-"+v.Name+"-Role-ttl")) {
+			handler.CreateRole(
+				v.Namespace,
+				strings.ToLower(v.Kind+"-"+v.Name+"-Role-ttl"),
+				roleResource(v.Kind),
+				v.Name,
+			)
+		}
+
+		if !handler.CheckRB(v.Namespace, strings.ToLower(v.Kind+"-"+v.Name+"-RB-ttl")) {
+			handler.CreateRB(
+				v.Namespace,
+				strings.ToLower(v.Kind+"-"+v.Name+"-RB-ttl"),
+				strings.ToLower(v.Kind+"-"+v.Name+"-SA-ttl"),
+				strings.ToLower(v.Kind+"-"+v.Name+"-Role-ttl"),
+			)
+		}
+
+		if !handler.CheckJob(v.Namespace, strings.ToLower(v.Kind+"-"+v.Name+"-Job-ttl")) {
+			handler.CreateJob(
+				v.Namespace,
+				strings.ToLower(v.Kind+"-"+v.Name+"-Job-ttl"),
+				v.Kind,
+				v.Name,
+				strings.ToLower(v.Kind+"-"+v.Name+"-SA-ttl"),
+				time,
+			)
+		}
+	}
+
 }
 
 func isResValid(r []util.ResInfo) bool {
@@ -132,4 +172,32 @@ func isResValid(r []util.ResInfo) bool {
 		}
 	}
 	return true
+}
+
+func roleResource(r string) string {
+	switch r {
+	case "Deployment":
+		return "deployments"
+	case "Pod":
+		return "pods"
+	case "Service":
+		return "services"
+	case "Ingress":
+		return "ingresses"
+	case "ConfigMap":
+		return "configmaps"
+	case "Secret":
+		return "secrets"
+	case "ReplicaSet":
+		return "replicasets"
+	case "PersistentVolumeClaim":
+		return "persistentvolumeclaims"
+	case "PersistentVolume":
+		return "persistentvolumes"
+	case "ServiceAccount":
+		return "serviceaccounts"
+	case "Job":
+		return "jobs"
+	}
+	return ""
 }

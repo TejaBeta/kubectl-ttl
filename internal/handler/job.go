@@ -25,7 +25,7 @@ import (
 )
 
 // CreateJob function is used to create a job to execute ttl
-func CreateJob(ns string, name string, kind string, resName string, sa string, time int) {
+func CreateJob(ns string, name string, kind string, resName string, sa string, time uint64) {
 	var ttlSecondsAfterFinished, backOffLimit int32 = 300, 3
 
 	jobContainer := v1.Container{
@@ -35,13 +35,13 @@ func CreateJob(ns string, name string, kind string, resName string, sa string, t
 	}
 
 	initContainer := v1.Container{
-		Name:    name,
+		Name:    "init-" + name,
 		Image:   "busybox:1.28",
 		Command: []string{"sh", "-c", "sleep " + fmt.Sprint(time) + "m"},
 	}
 
 	job := &batchv1.Job{
-		ObjectMeta: metav1.ObjectMeta{Name: "ttl-" + kind + "-job", Namespace: ns},
+		ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: ns},
 		Spec: batchv1.JobSpec{
 			TTLSecondsAfterFinished: &ttlSecondsAfterFinished,
 			BackoffLimit:            &backOffLimit,
@@ -50,6 +50,7 @@ func CreateJob(ns string, name string, kind string, resName string, sa string, t
 					ServiceAccountName: sa,
 					Containers:         []v1.Container{jobContainer},
 					InitContainers:     []v1.Container{initContainer},
+					RestartPolicy:      "OnFailure",
 				},
 			},
 		},

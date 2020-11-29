@@ -38,6 +38,7 @@ var ValidResList = map[string]bool{
 	"PersistentVolumeClaim": true,
 	"PersistentVolume":      true,
 	"ServiceAccount":        true,
+	"Job":                   true,
 }
 
 func unique(s []string) []string {
