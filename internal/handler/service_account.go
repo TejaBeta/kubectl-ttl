@@ -22,8 +22,8 @@ import (
 )
 
 // CreateSA helps to create a service account
-func CreateSA(ns string) {
-	sa := &v1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: "ttl-sa", Namespace: ns}}
+func CreateSA(ns string, name string) {
+	sa := &v1.ServiceAccount{ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: ns}}
 
 	context, err := getContext()
 	if err != nil {
@@ -40,7 +40,7 @@ func CreateSA(ns string) {
 		log.Fatalln(err)
 	}
 
-	log.Println("Service Account ttl-sa is created in namespace ", ns)
+	log.Println("Service Account "+name+" is created in namespace ", ns)
 }
 
 // CheckSA validates and identifies if a service account already exists

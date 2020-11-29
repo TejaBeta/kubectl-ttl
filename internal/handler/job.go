@@ -25,17 +25,17 @@ import (
 )
 
 // CreateJob function is used to create a job to execute ttl
-func CreateJob(ns string, kind string, name string, sa string, time int) {
+func CreateJob(ns string, name string, kind string, resName string, sa string, time int) {
 	var ttlSecondsAfterFinished, backOffLimit int32 = 300, 3
 
 	jobContainer := v1.Container{
-		Name:    "ttl-" + kind + "-Container",
+		Name:    name,
 		Image:   "bitnami/kubectl",
-		Command: []string{"kubectl", "delete", kind + "/" + name, "-n", ns},
+		Command: []string{"kubectl", "delete", kind + "/" + resName, "-n", ns},
 	}
 
 	initContainer := v1.Container{
-		Name:    "ttl-" + kind + "-Init-Container",
+		Name:    name,
 		Image:   "busybox:1.28",
 		Command: []string{"sh", "-c", "sleep " + fmt.Sprint(time) + "m"},
 	}
@@ -70,7 +70,7 @@ func CreateJob(ns string, kind string, name string, sa string, time int) {
 		log.Fatalln(err)
 	}
 
-	log.Println("ttl-", kind, "-job created successfully")
+	log.Println("Job " + name + " is created successfully")
 }
 
 // CheckJob lets us validate and identify the roles

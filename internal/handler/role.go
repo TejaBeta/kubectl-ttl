@@ -22,7 +22,7 @@ import (
 )
 
 // CreateRole is a function that creates roles for ttl to work
-func CreateRole(ns string, kind string, resName string) {
+func CreateRole(ns string, name string, kind string, resName string) {
 	rule := &rbacv1.PolicyRule{
 		Verbs:         []string{"delete"},
 		APIGroups:     []string{"*"},
@@ -31,7 +31,7 @@ func CreateRole(ns string, kind string, resName string) {
 	}
 
 	role := &rbacv1.Role{
-		ObjectMeta: metav1.ObjectMeta{Name: "ttl-" + kind + "-role", Namespace: ns},
+		ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: ns},
 		Rules:      []rbacv1.PolicyRule{*rule},
 	}
 
@@ -50,11 +50,11 @@ func CreateRole(ns string, kind string, resName string) {
 		log.Fatalln(err)
 	}
 
-	log.Println("Role ttl-", kind, "-role is created in namespace ", ns)
+	log.Println("Role "+name+" is created in namespace ", ns)
 }
 
 // CreateRB is a function to create role binding to the above role
-func CreateRB(ns string, sa string, role string) {
+func CreateRB(ns string, name string, sa string, role string) {
 
 	subject := rbacv1.Subject{
 		Kind:      "ServiceAccount",
@@ -69,7 +69,7 @@ func CreateRB(ns string, sa string, role string) {
 	}
 
 	rb := &rbacv1.RoleBinding{
-		ObjectMeta: metav1.ObjectMeta{Name: "ttl-rolebinding", Namespace: ns},
+		ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: ns},
 		Subjects:   []rbacv1.Subject{subject},
 		RoleRef:    roleRef,
 	}
@@ -89,7 +89,7 @@ func CreateRB(ns string, sa string, role string) {
 		log.Fatalln(err)
 	}
 
-	log.Println("Role ttl-rolebinding is created in namespace ", ns)
+	log.Println("Role "+name+" is created in namespace ", ns)
 }
 
 // CheckRole lets us validate and identify the roles
