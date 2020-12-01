@@ -1,4 +1,4 @@
-# kubectl-ttl ![Build](https://github.com/TejaBeta/kubectl-ttl/workflows/Go/badge.svg) [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](./LICENSE)
+# kubectl-ttl ![Build](https://github.com/TejaBeta/kubectl-ttl/workflows/Go/badge.svg) [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](./LICENSE) [![Go Report Card](https://goreportcard.com/badge/github.com/tejabeta/kubectl-ttl)](https://goreportcard.com/report/github.com/tejabeta/kubectl-ttl)
 
 A kubectl plugin to add `time-to-live` option to Kubernetes resources.
 
