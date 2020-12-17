@@ -44,8 +44,8 @@ func configPath() (string, error) {
 }
 
 func homeDir() string {
-	if h := os.Getenv("HOME"); h != "" {
-		return h
+	if home := os.Getenv("HOME"); home != "" {
+		return home
 	}
-	return os.Getenv("USERPROFILE") // windows
+	return os.Getenv("USERPROFILE")
 }
